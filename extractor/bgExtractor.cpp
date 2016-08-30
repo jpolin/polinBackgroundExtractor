@@ -6,11 +6,21 @@
  */
 
 #include <iostream>
+#include <stdlib.h>
+#include <stdio.h>
 
 #include "bgExtractor.hpp"
 
-void printDummy(){
-	std::cout << "Hello" << std::endl;
+using namespace std;
+
+const bool bgExtractor::loadVideoFile(const string &filename){
+
+	return true;
+}
+
+const bool bgExtractor::analyzeFile(){
+	cout << "Analyzing...\n";
+	return true;
 }
 
 

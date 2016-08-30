@@ -8,6 +8,7 @@
 #include "bgExtractor.hpp"
 
 int main(int argc, char** argv){
-	printDummy();
+	bgExtractor bge;
+	bge.analyzeFile();
 	return 0;
 }
