@@ -12,12 +12,8 @@
 
 #include <string.h>
 #include "opencv2/opencv.hpp"
-#include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/video/background_segm.hpp"
-#include "opencv2/video/video.hpp"
-
-// Define if you want to visualize
-#define VISUALIZE
+#include <atomic>
 
 #ifdef VISUALIZE
 #include <unistd.h>
@@ -35,10 +31,14 @@ using namespace cv;
 class bgExtractor {
 
 	string videoName;
-	Mat *backgroundImage = NULL;
+	Mat backgroundImage;
 	cv::VideoCapture vid;
 
 public:
+
+	// Default constructor
+	bgExtractor();
+
 	// Load a video, return true if found successfully
 	const bool loadVideoFile(const string &filename);
 
@@ -51,13 +51,17 @@ public:
 	 */
 	const bool analyzeFile();
 
-	/* Return a pointer to the current background image. If it returns NULL,
-	 * read errorMessage for more info.
+	/*
+	 * Write current background to filename; return true if success or false
+	 * (along with update to errorMessage) if failed.
 	 */
-	Mat *getBackground() const;
+	const bool writeBackgroundToFile(const string& filename) ;
 
 	// Populated with error message by any faulting method
 	string errorMessage;
+
+	// Store current progress of analysis in threadsafe var
+	atomic_uint progress;
 
 };
 

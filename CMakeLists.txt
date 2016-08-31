@@ -10,7 +10,13 @@ link_directories(${BASE_DIR})
 # Debugging make scheme
 #SET(CMAKE_VERBOSE_MAKEFILE ON)
 
-#SET(CMAKE_CXX_FLAGS_DEBUG "-g -gdb")
+# Use C++11
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+# Set DEBUG flag for files
+if (CMAKE_BUILD_TYPE MATCHES "DEBUG")
+    ADD_DEFINITIONS(-DDEBUG)
+endif()
 
 # Projects/libs
 add_subdirectory(${BASE_DIR}/extractor)
