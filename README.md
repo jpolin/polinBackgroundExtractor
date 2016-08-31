@@ -9,7 +9,10 @@ This library extracts a static background image from an input video.
 ##Dependencies##
 
 - CMake 2.8 or newer
-- OpenCV
+- OpenCV (TODO-version)
+- [cpprestsdk](https://github.com/Microsoft/cpprestsdk)
+  - Included as git submodule (must run ```git submodule init && git submodule update``` after cloning)
+  - Requires **libboost-all-dev** and **libssl-dev**
 
 ##Building##
 
