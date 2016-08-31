@@ -41,7 +41,7 @@ const bool bgExtractor::analyzeFile(){
 	}
 
 	// Only look at a fixed number of evenly spaced frame (at most)
-	size_t frameBufferSize = 100;
+	size_t frameBufferSize = MAXBUFFERFRAMES;
 	const size_t frameCount = vid.get(CV_CAP_PROP_FRAME_COUNT);
 	const size_t skipFrames = frameCount / frameBufferSize;
 	// Since the skipFrames operation rounds down, get more accurate estimate of buffer
@@ -56,7 +56,7 @@ const bool bgExtractor::analyzeFile(){
 	// Use mixture of Gaussians
 	BackgroundSubtractorMOG2 bgSubtractor(
 			/*int history*/ frameBufferSize,
-			/*float varThreshold*/ 0.01,
+			/*float varThreshold*/ 0.1,
 			/*bool bShadowDetection=true*/ true);
 
 #ifdef VISUALIZE

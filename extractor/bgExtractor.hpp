@@ -15,6 +15,10 @@
 #include "opencv2/video/background_segm.hpp"
 #include <atomic>
 
+// How many frames the algorithm will use to get background
+#define MAXBUFFERFRAMES 3000
+
+
 #ifdef VISUALIZE
 #include <unistd.h>
 #endif

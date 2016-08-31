@@ -8,7 +8,7 @@ include_directories(${BASE_DIR})
 link_directories(${BASE_DIR})
 
 # Debugging make scheme
-#SET(CMAKE_VERBOSE_MAKEFILE ON)
+SET(CMAKE_VERBOSE_MAKEFILE ON)
 
 # Use C++11
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
