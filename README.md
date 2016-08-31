@@ -18,3 +18,12 @@ Source is written in C++ and can be compiled using CMake and Make. There are she
 ##Usage##
 
 There are 3 ways to leverage the library:
+
+1. Local (wrapper for library):
+
+```bash
+cd polinBackgroundExtractor/
+sh make_rel.sh # If not already compiled
+cd release/wrapper/
+./bgExtractorWrapper ../../sample_videos/ring_sample_1.mp4 output.jpg
+```
