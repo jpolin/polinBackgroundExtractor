@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
+#message(STATUS ${CMAKE_BUILD_TYPE})
+
 # For all projects/libs
 SET(BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${BASE_DIR})
@@ -7,6 +9,8 @@ link_directories(${BASE_DIR})
 
 # Debugging make scheme
 #SET(CMAKE_VERBOSE_MAKEFILE ON)
+
+#SET(CMAKE_CXX_FLAGS_DEBUG "-g -gdb")
 
 # Projects/libs
 add_subdirectory(${BASE_DIR}/extractor)

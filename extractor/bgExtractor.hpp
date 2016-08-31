@@ -12,6 +12,16 @@
 
 #include <string.h>
 #include "opencv2/opencv.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/video/background_segm.hpp"
+#include "opencv2/video/video.hpp"
+
+// Define if you want to visualize
+#define VISUALIZE
+
+#ifdef VISUALIZE
+#include <unistd.h>
+#endif
 
 // TODO: Logging macros
 //#define STATUS(x)
@@ -20,17 +30,34 @@
 //#define STATUS printf
 
 using namespace std;
+using namespace cv;
 
 class bgExtractor {
 
 	string videoName;
-	string errorMessage;
+	Mat *backgroundImage = NULL;
+	cv::VideoCapture vid;
 
 public:
+	// Load a video, return true if found successfully
 	const bool loadVideoFile(const string &filename);
-	const bool analyzeFile();
-//	 getBackground() const;
 
+	/* Analyze video and populate backgroundImage.
+	 *
+	 * If returns true, then background image was successfully extracted and
+	 * can be recovered by calling getBackgroundImage();
+	 *
+	 * If returns false, then read errorMessage for more info.
+	 */
+	const bool analyzeFile();
+
+	/* Return a pointer to the current background image. If it returns NULL,
+	 * read errorMessage for more info.
+	 */
+	Mat *getBackground() const;
+
+	// Populated with error message by any faulting method
+	string errorMessage;
 
 };
 

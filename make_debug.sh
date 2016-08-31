@@ -5,5 +5,5 @@
 rm -rf debug
 mkdir debug
 cd debug
-cmake .. -DCMAKE_RELEASE_TYPE=DEBUG
+cmake .. -DCMAKE_BUILD_TYPE=DEBUG
 make
