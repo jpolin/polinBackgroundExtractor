@@ -16,6 +16,10 @@
 // Server
 #include "cpprest/http_listener.h"
 #include "cpprest/json.h"
+#include "pplx/pplxtasks.h"
+#include <boost/tokenizer.hpp>
+#include <vector>
+#include <sstream>
 
 using namespace web::http;
 using namespace web::http::experimental::listener;
@@ -27,6 +31,11 @@ class bgExtractionServer : public http_listener {
 public:
 	// Provide url:port (eg http://localhost:9999)
 	bgExtractionServer(const string &urlPort);// : http_listener(urlPort);
+
+
+	// Puts contents of filename into string buf
+	static const bool loadFileToString(const string &filename, string &buf);
+
 
 protected:
 
@@ -45,6 +54,9 @@ protected:
 
 	// Removes video/image on server
 	void del_cb(http_request request);
+
+	// Returns new, unique ID that no other client is using
+	const uint getNewID();
 
 
 };
