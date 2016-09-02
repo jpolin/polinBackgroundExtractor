@@ -112,6 +112,42 @@ Once the codebase has been built, there are 3 ways to leverage the library.
 
   This could more accurately be described as an extension of the previous point since it also leverages the RESTful server interface. To use this, first start the server as described in the previous point. Then, simply open [www/video_extractor.html](/www/video_extractor.html)(your local copy) in your chosen web browser.
   
-##Design##
+##Design (by class)##
   
-  
+###Background Extraction ([bgExtractor](/extractor/bgExtractor.hpp))###
+
+I investigated a number of methods for extracting the background, including more- and less-complicated versions of the Mixture of Gaussians model. Ultimately, the OpenCV function proved adequate, so I focused on packaging it up and delivering it in a more self-contained package. The inputs and outputs are purely file paths which provides 2 benefits:
+
+- Clients calling the methods directly in the library do not need to include or link to OpenCV
+- Since all requests coming into the server are already in the form of file paths, this makes for minimal work required by the server
+
+There are a number of enhancements I would make to this class given time:
+- Provide a more conveneint way for measuring progress
+- Account for gradual changes in light
+- Determine when there are forefround objects and automatically have them buffered for the client
+- 
+###Server ([server.hpp](/server/server.hpp))###
+
+I still believe that designing a RESTful server that can be hosted locally was a good decision given its support in many languages, including javascript. In essence, running the server locally and accessing via webpage is similar to having a front-end for my library. At the same time, it could be deployed as a cloud service with little modification.
+
+However, implementing the server in C++ proved more daunting than I anticipated (even with the help of the cpprestsdk library. In particular, writing the callback for a multi-part PUT command proved too complicated for this time frame. To simulate the proper funtionality, I am simply passing file paths between the server and webpage. Obviously, if this server were not being hosted on the same machine as the browser, it would not work. This is currently the largest weakness in the platform.
+
+Further, I ran into a number of other issues, such as Cross Origin Requests (CORs) due to the fact that the server was not being hosted on port 80. Apparently, when browsers (such as Google Chrome) make CORs, they encapsulate the PUT request inside of an OPTION request. Thus, the server currently interprets these as the same (admittedly, this is a short-term hack).
+
+An important design feature of the server is that the client must first request a unique ID to be associated with their upload/download. Once this ID is returned, the client is approved to upload their video file. This allows the server to make sure that two clients uploading videos with the same name (but different content) don't get crossed. In the data folder, these ID's are used as folder names, and each directory holds the .mp4 and .jpg files. Thus, the background extractor will not be re-run if multiple requests are made.
+
+Going forward, I would like make the following improvements and extensions to the server:
+- Properly implement the PUT callback to handle multi-part requests ([this library](https://github.com/webappsdk/granada) looks promising)
+- More robust error checking (and helpful feedback) on faulty requests
+- Generate ID's more intelligently (check for existing folders/ID's at startup)
+- Implement DEL request to remove folder (and ID) when client closes session
+
+###Large scale deployent###
+
+In the future, if this were to be deployed as a full cloud service, the architecture would need to be further extended. Although I personally don't have much first-hand experience in scaling a cloud-based application, I did my best to design the framework with this ultimate goal in mind. Given the knowledge I have now, my first attempt would look something like:
+
+- Install a container system, such as Docker, where each container had a version of the bgExtractor executable running
+- The Docker daemon would send paths of uploaded files to the extractors running in the containers
+- When the container finished, it would return a path to the background file (or an error code) to be delivered to the client
+
+
