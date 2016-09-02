@@ -81,7 +81,7 @@ Once the codebase has been built, there are 2 ways to leverage the library.
   For a complete example, see [extractor_main.cpp](/extractor/extractor_main.cpp). To run this example, run:
   
   ```bash
-  cd polinBackgroundExtractor # root fir
+  cd polinBackgroundExtractor # root dir
   sh run_extractor_executable.sh
   ```
 
@@ -116,28 +116,37 @@ There are some enhancements I would make to this class given time:
 
 ###Server ([server.hpp](/server/server.hpp))###
 
-I still believe that designing a RESTful server that can be hosted locally was a good decision given its support in many languages, including javascript. In essence, running the server locally and accessing via webpage is similar to having a front-end for my library. At the same time, it could be deployed as a cloud service with little modification.
+I still believe that designing a RESTful server that can be hosted locally was a good decision given its support in many languages, including javascript. In essence, running the server locally and accessing via webpage is similar to having a front-end for my library. At the same time, it could be deployed as a cloud service with little modification to the architecture (it would certainly need to be extended though; see below).
 
 However, implementing the server in C++ proved more daunting than I anticipated (even with the help of the cpprestsdk library). In particular, writing the callback for a multi-part PUT command proved too complicated for this time frame. To simulate the proper funtionality, I am simply passing file paths between the server and webpage. Obviously, if this server were not being hosted on the same machine as the browser, it would not work. This is currently the largest weakness in the platform.
-
-Further, I ran into a number of other issues, such as Cross Origin Requests (CORs) due to the fact that the server was not being hosted on port 80. Apparently, when browsers (such as Google Chrome) make CORs, they encapsulate the PUT request inside of an OPTION request. Thus, the server currently interprets these as the same (admittedly, this is a short-term hack).
 
 An important design feature of the server is that the client must first request a unique ID to be associated with their upload/download. Once this ID is returned, the client is approved to upload their video file. This allows the server to make sure that two clients uploading videos with the same name (but different content) don't get crossed. In the data folder, these ID's are used as folder names, and each directory holds the .mp4 and .jpg files. Thus, the background extractor will not be re-run if multiple requests for the same file are made.
 
 Going forward, I would like make the following improvements and extensions to the server:
-- Properly implement the PUT callback to handle multi-part requests ([this library](https://github.com/webappsdk/granada) looks promising)
+- Properly implement the POST (or PUT) callback to handle multi-part requests ([this library](https://github.com/webappsdk/granada) looks promising)
 - Install more robust error checking (and helpful feedback) on faulty requests
 - Generate ID's more intelligently (check for existing folders/ID's at startup)
 - Implement DEL request to remove folder (and ID) when client closes session
 
 ###Large scale deployent###
 
-In the future, if this were to be deployed as a full cloud service, the architecture would need to be further extended. Although I personally don't have much first-hand experience in scaling a cloud-based application, I did my best to design the framework with this ultimate goal in mind. Given the knowledge I have now, my first attempt would look something like:
+In the future, if this were to be deployed as a full cloud service, the architecture would need to be further extended. Although I personally don't have much first-hand experience in scaling a cloud-based application, I did my best to design the framework with this ultimate goal in mind. Given the knowledge I have now, my next steps would look something like:
 
-- Install a container system, such as Docker, where each container had a version of the bgExtractor executable running
+- Install a container system, such as Docker, where the containers run the bgExtractor code
 - The Docker daemon would send paths of uploaded files to the extractors running in the containers
 - When the container finished, it would return a path to the background file (or an error code) to be delivered to the client
 
 Disclaimer: I haven't used containers or Docker before
+
+###Sources###
+
+Some resources that I depended on during development:
+
+http://mariusbancila.ro/blog/2013/08/19/full-fledged-client-server-example-with-cpprest-sdk-110/
+http://docs.opencv.org/3.1.0/d1/dc5/tutorial_background_subtraction.html
+https://github.com/Microsoft/cpprestsdk/blob/master/Release/samples/CasaLens/casalens.cpp
+http://stackoverflow.com/questions/14978411/http-post-and-get-using-curl-in-linux
+
+
 
 
