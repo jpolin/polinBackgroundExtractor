@@ -17,10 +17,9 @@ bgExtractionServer::bgExtractionServer(const string &url, const uint port, const
 	data_path = boost::filesystem::path(_data_path).string();
 
 	// Server status
-	cout << "Server status:" << endl;
-	cout<< "URL: " << uri().path() << endl;
-	cout << "port " << port << endl;
-	cout << "Data folder at " << data_path << endl << endl;
+	cout << "Server port: " << port << endl;
+	cout << "Data folder at ./" << data_path << endl;
+	cout << "Starting server (ctrl+C to stop)" << endl;
 }
 
 // A 'PUT' request from outside of domain gets delivered as opt. For now, just pass through.
@@ -32,6 +31,11 @@ void bgExtractionServer::opt_cb(http_request request){
 // Request from client to upload mp4 file
 void bgExtractionServer::put_cb(http_request request){
 	cout << "PUT REQUEST" << endl;
+
+	// Testing asynchrosity
+//	cout << "Going to sleep..." << flush;
+//	sleep(30);
+//	cout << "Awake!" << endl;
 
 	// Get file root name and extension
 	const string file_name = request.relative_uri().path();

@@ -57,7 +57,8 @@ int main(int argc, char** argv){
 	thread progressThread(printExtractionProgress, ref(extractor));
 
 	// Analyze file
-	if (!extractor.analyzeFile()){
+	bool visualize_output = true;
+	if (!extractor.analyzeFile(visualize_output)){
 		cout << "File analysis failed: " << extractor.errorMessage << endl;
 		progressThread.join();
 		return 3;

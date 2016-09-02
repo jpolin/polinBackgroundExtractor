@@ -52,7 +52,7 @@ public:
 	 *
 	 * If returns false, then read errorMessage for more info.
 	 */
-	const bool analyzeFile();
+	const bool analyzeFile(const bool visualize_output=false);
 
 	/*
 	 * Write current background to filename; return true if success or false

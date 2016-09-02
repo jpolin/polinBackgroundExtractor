@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Background Extractor</title>
+	<title>Joe Polin's Background Extractor</title>
 	<meta charset="UTF-8">
 	<meta name="description" content="Extract background from MP4 video">
 	<meta name="author" content="Joe Polin">
@@ -15,78 +15,86 @@
 			// Server port
 			var port = 9090;
 
+
+			// Initialization
 			$("document").ready(function(){
-				// Initialization
+
+				// Actuate a hidden button to bring up file box
 				function upload_file(){
 					$("#upload_button").click();
 				}
 
-
-
+				// Callback for clicking in text box
 				$("#video_path").click(upload_file);
+
+				// Callback for when value of input changes
 				$("#upload_button").change(function() {
 
 					var file = this.files[0];
-					// var formdata = new FormData($("#form"));
-					// formdata.append(1, file);
 
 					// Ask server for ID
 					$.get( "http://localhost:" + port + "/new_id", function( data ) {
-						var id = data["new_id"];
 
+						// Generate url for put request
+						var id = data["new_id"];
 						var dest_url = "http://localhost:" + port + "/" + id + "/" + file.name;
 						console.log(dest_url);
 
+						// Put data
 						var formData = new FormData($("#form")[0]);
 						$.ajax({
-				        url: dest_url,  //Server script to process data
-				        type: 'PUT',
+				        url: dest_url,
+				        type: 'PUT',			        
 				        data: formData,
 				        cache: false,
 				        contentType: false,
 				        processData: false
+				        // Set output as photo
+				        success: function(data){
+				        	$("#background").src=data['link'];
+				        	$("#background_link").href=data['link'];
+				        }
 				      });
 					});
 				});
 			});
 
+				
+	</script>
+</head>
 
+<body>
+	<div id="outer_box">
+		<div id="middle_box">
+			<div id="inner_box">
+				<div id="info">
 
-					// Get it converted
-					// var file = $("#upload_button").val();
-					// document.getElementById("video_path").value = file;
-
-					// Get an ID
-
-
-					// Request file
-
-					
-				</script>
-			</head>
-
-			<body>
-				<div id="outer_box">
-					<div id="middle_box">
-						<div id="inner_box">
-							<div id="info">
-								<div class="center">
-									<h1>Background Extractor</h1>
-									<h4>by Joe Polin</h4>
-								</div>
-							</div>
-							<div id="input_wrapper">
-								<div class="center">
-									<form id="form" enctype="multipart/form-data">
-										<input type="text" id="video_path" value="Upload file...">
-										<input type="file" id="upload_button">
-									</form>
-								</div>
-							</div>
-							<div id="output" class="center">out</div>
-						</div>
+					<div class="center">
+						<h1>Background Extractor</h1>
+						<h4>by Joe Polin</h4>
 					</div>
-				</div>
-			</body>
 
-			</html>
+				</div>
+				<div id="input_wrapper">
+
+					<div class="center">
+						<form id="form" enctype="multipart/form-data">
+							<input type="text" id="video_path" value="Upload file...">
+							<input type="file" id="upload_button">
+						</form>
+					</div>
+
+				</div>
+
+				<div id="output" class="center">
+					<a id="background_link">
+					<img id="background">
+					</a>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

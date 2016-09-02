@@ -14,6 +14,7 @@
 using namespace std;
 
 int main(int argc, char** argv){
+
 	// Params
 	if (argc != 3){
 		cout << "Must provide 2 arguments: port and data folder path" << endl;
@@ -23,7 +24,7 @@ int main(int argc, char** argv){
 	const string data_path(argv[2]);
 
 	bgExtractionServer server("http://localhost", port, data_path);
-	server.open().then([&server](){cout<<"Starting Server\n";}).wait();
+	server.open().then([&server](){}).wait();
 	while (true);
 	return 0;
 }

@@ -29,7 +29,7 @@ const bool bgExtractor::loadVideoFile(const string &filename){
 	}
 }
 
-const bool bgExtractor::analyzeFile(){
+const bool bgExtractor::analyzeFile(const bool visualize_output/*=false*/){
 	// Make sure it's open
 	if (!vid.isOpened()){
 		errorMessage = "Video not opened";
@@ -71,6 +71,12 @@ const bool bgExtractor::analyzeFile(){
 
 	// Update class member
 	bgSubtractor.getBackgroundImage(backgroundImage);
+
+	if (visualize_output){
+		namedWindow("Background", 1);
+		imshow("Background", backgroundImage);
+		waitKey(0);
+	}
 
 	errorMessage = "No error";
 	return true;
