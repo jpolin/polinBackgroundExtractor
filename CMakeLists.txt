@@ -21,6 +21,5 @@ endif()
 # Projects/libs
 add_subdirectory(${BASE_DIR}/extractor)
 add_subdirectory(${BASE_DIR}/server)
-add_subdirectory(${BASE_DIR}/wrapper)
 
 

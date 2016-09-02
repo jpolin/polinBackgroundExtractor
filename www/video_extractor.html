@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>Background Extractor</title>
-		<meta charset="UTF-8">
-		<meta name="description" content="Extract background from MP4 video">
-		<meta name="author" content="Joe Polin">
+<head>
+	<title>Background Extractor</title>
+	<meta charset="UTF-8">
+	<meta name="description" content="Extract background from MP4 video">
+	<meta name="author" content="Joe Polin">
 
-		<link rel="stylesheet" type="text/css" href="style.css">
+	<link rel="stylesheet" type="text/css" href="style.css">
 
-		<!-- Scripts -->
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-		<script>
+	<!-- Scripts -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+	<script>
+
+			// Server port
+			var port = 9090;
 
 			$("document").ready(function(){
 				// Initialization
@@ -23,9 +26,35 @@
 				$("#video_path").click(upload_file);
 				$("#upload_button").change(function() {
 
+					var file = this.files[0];
+					// var formdata = new FormData($("#form"));
+					// formdata.append(1, file);
+
+					// Ask server for ID
+					$.get( "http://localhost:" + port + "/new_id", function( data ) {
+						var id = data["new_id"];
+
+						var dest_url = "http://localhost:" + port + "/" + id + "/" + file.name;
+						console.log(dest_url);
+
+						var formData = new FormData($("#form")[0]);
+						$.ajax({
+				        url: dest_url,  //Server script to process data
+				        type: 'PUT',
+				        data: formData,
+				        cache: false,
+				        contentType: false,
+				        processData: false
+				      });
+					});
+				});
+			});
+
+
+
 					// Get it converted
-					var file = $("#upload_button").val();
-					document.getElementById("video_path").value = file;
+					// var file = $("#upload_button").val();
+					// document.getElementById("video_path").value = file;
 
 					// Get an ID
 
@@ -33,33 +62,31 @@
 					// Request file
 
 					
-				});
+				</script>
+			</head>
 
-				// $("#upload_button").click();
-			});
-		</script>
-	</head>
-
-	<body>
-		<div id="outer_box">
-			<div id="middle_box">
-				<div id="inner_box">
-					<div id="info">
-						<div class="center">
-							<h1>Background Extractor</h1>
-							<h4>by Joe Polin</h4>
+			<body>
+				<div id="outer_box">
+					<div id="middle_box">
+						<div id="inner_box">
+							<div id="info">
+								<div class="center">
+									<h1>Background Extractor</h1>
+									<h4>by Joe Polin</h4>
+								</div>
+							</div>
+							<div id="input_wrapper">
+								<div class="center">
+									<form id="form" enctype="multipart/form-data">
+										<input type="text" id="video_path" value="Upload file...">
+										<input type="file" id="upload_button">
+									</form>
+								</div>
+							</div>
+							<div id="output" class="center">out</div>
 						</div>
 					</div>
-					<div id="input_wrapper">
-						<div class="center">
-							<input type="text" id="video_path" value="Upload file...">
-							<input type="file" id="upload_button">
-						</div>
-					</div>
-					<div id="output" class="center">out</div>
 				</div>
-			</div>
-		</div>
-	</body>
+			</body>
 
-</html>
+			</html>

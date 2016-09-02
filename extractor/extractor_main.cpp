@@ -3,6 +3,9 @@
  *
  *  Created on: Aug 29, 2016
  *      Author: Joe Polin
+ * Description: Simple app that exercises the bgExtractor library
+ *       Usage:
+ *              ./extractor_main input_file.mp4 output_file.jpg
  */
 
 #include "bgExtractor.hpp"
@@ -50,7 +53,7 @@ int main(int argc, char** argv){
 		return 2;
 	}
 
-	// Monitor progress of analyzing
+	// Monitor progress of analysis
 	thread progressThread(printExtractionProgress, ref(extractor));
 
 	// Analyze file
@@ -59,7 +62,6 @@ int main(int argc, char** argv){
 		progressThread.join();
 		return 3;
 	}
-	progressThread.join();
 
 	// Write background to file
 	if (!extractor.writeBackgroundToFile(outputFile)){
@@ -69,6 +71,8 @@ int main(int argc, char** argv){
 
 	cout << inputFile << " was successfully analyzed. Background written to ";
 	cout << outputFile << endl;
+
+	progressThread.join();
 
 	return 0;
 }

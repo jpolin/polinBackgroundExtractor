@@ -5,10 +5,6 @@
  *      Author: Joe Polin
  */
 
-#include <iostream>
-#include <stdlib.h>
-#include <stdio.h>
-
 #include "bgExtractor.hpp"
 
 using namespace std;
@@ -47,23 +43,11 @@ const bool bgExtractor::analyzeFile(){
 	// Since the skipFrames operation rounds down, get more accurate estimate of buffer
 	frameBufferSize = frameCount / (1 + skipFrames);
 
-#ifdef DEBUG
-	printf("Frames: %lu, frameBufferSize: %lu, skipFrames: %lu\n",
-			frameCount, frameBufferSize, skipFrames);
-#endif
-
-
 	// Use mixture of Gaussians
 	BackgroundSubtractorMOG2 bgSubtractor(
 			/*int history*/ frameBufferSize,
 			/*float varThreshold*/ 0.1,
 			/*bool bShadowDetection=true*/ true);
-
-#ifdef VISUALIZE
-	// Open window to visualize whatever is done in loop
-	namedWindow("Visualizer", 1);
-	double period = 1.0/vid.get(CV_CAP_PROP_FPS);
-#endif
 
 	// Iterate through frames
 	Mat frame, mask;
@@ -83,25 +67,10 @@ const bool bgExtractor::analyzeFile(){
 		// Reset skipFrames sometimes
 		if (skipFrameIndex++ == skipFrames) skipFrameIndex = 0;
 
-#if defined(DEBUG) && defined(NODEF)
-		printf("Progress: %u \%\n", (unsigned)progress);
-#endif
-
-#if defined(VISUALIZE) && defined(NODEF)
-		imshow("Visualizer", mask);
-		cvWaitKey(1e3 * period);
-#endif
-
 	}
 
 	// Update class member
 	bgSubtractor.getBackgroundImage(backgroundImage);
-
-#ifdef VISUALIZE
-	// Show background image until user hits key
-	imshow("Visualizer",backgroundImage);
-	waitKey(0);
-#endif
 
 	errorMessage = "No error";
 	return true;
@@ -115,7 +84,6 @@ const bool bgExtractor::writeBackgroundToFile(const string& filename) {
 	}
 
 	bool s = imwrite(filename, backgroundImage);
-
 	errorMessage = "No error";
 	return true;
 }

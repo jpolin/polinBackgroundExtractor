@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.8)
 project(backgroundExtractionServer)
 
 # Create executable
-add_executable(backgroundExtractionServer server.cpp)
+add_executable(backgroundExtractionServer server.cpp server_main.cpp)
 
 # Connect to cpprestsdk
 include_directories(cpprestsdk/Release/include)

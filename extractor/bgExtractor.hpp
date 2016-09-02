@@ -2,32 +2,31 @@
  * extractor.hpp
  *
  *  Created on: Aug 29, 2016
- *      Author: jpolin
- * Description: Class used for loading video, analyzing, and returning image of background.
- *       Usage: TODO
+ *      Author: Joe Polin
+ * Description: Library used for loading video, analyzing, and returning image of background.
+ *       Usage:
+ *
+ *       		bgExtractor extractor;
+ *       		extractor.loadVideoFile(inputFile);
+ *       		extractor.analyzeFile();
+ *       		extractor.writeBackgroundToFile(outputFile);
+ *
  */
 
 #ifndef EXTRACTOR_HPP_
 #define EXTRACTOR_HPP_
 
+#include <iostream>
+#include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
+#include <atomic>
+
 #include "opencv2/opencv.hpp"
 #include "opencv2/video/background_segm.hpp"
-#include <atomic>
 
 // How many frames the algorithm will use to get background
 #define MAXBUFFERFRAMES 3000
-
-
-#ifdef VISUALIZE
-#include <unistd.h>
-#endif
-
-// TODO: Logging macros
-//#define STATUS(x)
-//#define WARNING(X)
-//#define ERROR(x)
-//#define STATUS printf
 
 using namespace std;
 using namespace cv;
@@ -43,7 +42,7 @@ public:
 	// Default constructor
 	bgExtractor();
 
-	// Load a video, return true if found successfully
+	// Load a video, return true if found successfully.
 	const bool loadVideoFile(const string &filename);
 
 	/* Analyze video and populate backgroundImage.
