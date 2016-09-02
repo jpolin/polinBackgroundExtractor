@@ -16,7 +16,12 @@ The background extraction is handled by the OpenCV function ```BackgroundSubtrac
 - Uses a self-varying number of mixed gaussian models to determine the value for each background pixel
 - Has the option for detecting shadows and returning them in the foreground mask (not relevant for background extraction)
 
-##Getting started##
+The algorithm currently relies on the following assumptions:
+
+- The camera is not moving relative to the background
+- The algorithm, will not necessarily compensate for intensity changes, gradual or otherwise
+
+##Setting Up and Running Examples##
 
 ###System Dependencies###
 
@@ -50,21 +55,56 @@ sh make_rel.sh # or make_debug.sh
 cd release # or debug
 ```
 
-
-
 The builds are intentionally placed outside of the source tree, and the executables can be acccessed in their respective build directory (**debug** or **release**). 
-
-
 
 ##Usage##
 
-There are 3 ways to leverage the library:
+Once the codebase has been built, there are 3 ways to leverage the library. Each method has a corresponding shell script in the root directory.
 
-1. Local (wrapper for library):
+1. Link executable to library:
 
-```bash
-cd polinBackgroundExtractor/
-sh make_rel.sh # If not already compiled
-cd release/wrapper/
-./bgExtractorWrapper ../../sample_videos/ring_sample_1.mp4 output.jpg
-```
+  In your C++ application:
+  
+  ```C++
+  #include "bgExtractor.hpp"
+  .
+  .
+  .
+  bgExtractor extractor;
+  extractor.loadVideoFile(inputFile);
+  extractor.analyzeFile();
+  extractor.writeBackgroundToFile(outputFile);
+  ```
+  
+  For a complete example, see [extractor_main.cpp](/extractor/extractor_main.cpp). To run this example, run:
+  
+  ```bash
+  cd polinBackgroundExtractor
+  sh run_extractor_executable.sh
+  ```
+
+  Linking your exectuable to this library will provide better performance than the following 2 methods; however, we will see that using the REST interface will offer other advantages.
+  
+2. Use REST API on a local server:
+
+  First, the server must be started by calling the executable generated from [server_main.cpp](server/server_main.cpp) which accepts, as command-line arguments, the port and path to the data folder. It can be started more conevniently using the shell script:
+  
+  ```bash
+  cd polinBackgroundExtractor
+  sh run_server.sh # Arguments set in file
+  ```
+  
+  Since the server uses a [restful interface](https://en.wikipedia.org/wiki/Representational_state_transfer), the developer is not tied to a specific language. For instance, a background extraction can be done using command line arguments that talk to the server:
+  
+  ```bash
+  # run_REST_client_demo.sh
+  #TODO: Copy CURL commands into here
+  ```
+  
+  These commands are included in [run_RESdT_client_demo.sh](/run_REST_client_demo.sh).
+  
+3. Use web interface:
+
+  This could more accurately be described as an extension of the previous point since it also leverages the RESTful server interface. To use this, first start the server as described in the previous point. Then, simply open [www/video_extractor.html](/www/video_extractor.html) in your chosen web browser.
+  
+  
