@@ -106,7 +106,7 @@ Once the codebase has been built, there are 3 ways to leverage the library.
   
   These commands are included in [run_RESdT_client_demo.sh](/run_REST_client_demo.sh).
   
-  A further advantage of using the RESTful server is that it is completely asynchronous and can handle multiple calls at the same time (TODO--make sure this is true!).
+  A further advantage of using the RESTful server is that it is completely asynchronous and can handle multiple calls at the same time (I confirmed that the server would handle a second PUT request even if a first one was still being handled).
   
 3. Use web interface:
 
