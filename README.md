@@ -112,6 +112,8 @@ Once the codebase has been built, there are 3 ways to leverage the library.
 
   This could more accurately be described as an extension of the previous point since it also leverages the RESTful server interface. To use this, first start the server as described in the previous point. Then, simply open [www/video_extractor.html](/www/video_extractor.html)(your local copy) in your chosen web browser.
   
+  **NOTE:** Due to a bug that I'm still working through (specifics below), you can only upload the files that are in the **polingBackgroundExtractor/sample_videos** directory. I'm having trouble transferring the files with a PUT request, so currently I'm cheating by using the filename that gets passed to me and checking there.
+  
 ##Design (by class)##
   
 ###Background Extraction ([bgExtractor](/extractor/bgExtractor.hpp))###
