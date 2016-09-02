@@ -98,7 +98,7 @@ Once the codebase has been built, there are 2 ways to leverage the library.
   
   Since the server uses a [restful interface](https://en.wikipedia.org/wiki/Representational_state_transfer), the developer is not tied to a specific language. Most popular languages support the sending of (at least simple) REST commands, and one of the most popular it HTTP/Javascript (which is what my example uses). Simply open [www/video_extractor.html](/www/video_extractor.html)(your local copy, though) in your chosen web browser.
   
-  **NOTE:** Due to a bug that I'm still working through (specifics below), you can only upload the files that are in the **polingBackgroundExtractor/sample_videos** directory. I'm having trouble transferring the files with a multi-part POST request, so currently I'm cheating by using the filename that gets passed to me and checking there.
+  **NOTE:** Due to a bug that I didn't have time to work through (specifics below), you can only upload the files that are in the **polingBackgroundExtractor/sample_videos** directory. I'm having trouble transferring the files with a multi-part POST request, so I'm cheating by using the filename that gets passed to me and checking there.
   
 ##Design (by class)##
   
