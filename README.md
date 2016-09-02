@@ -62,7 +62,7 @@ The builds are intentionally placed outside of the source tree, and the executab
 
 ##Usage##
 
-Once the codebase has been built, there are 3 ways to leverage the library. Each method has a corresponding shell script in the root directory.
+Once the codebase has been built, there are 3 ways to leverage the library. 
 
 1. Link executable to library:
 
@@ -82,7 +82,7 @@ Once the codebase has been built, there are 3 ways to leverage the library. Each
   For a complete example, see [extractor_main.cpp](/extractor/extractor_main.cpp). To run this example, run:
   
   ```bash
-  cd polinBackgroundExtractor
+  cd polinBackgroundExtractor # root fir
   sh run_extractor_executable.sh
   ```
 
@@ -93,7 +93,7 @@ Once the codebase has been built, there are 3 ways to leverage the library. Each
   First, the server must be started by calling the executable generated from [server_main.cpp](server/server_main.cpp) which accepts, as command-line arguments, the port and path to the data folder. It can be started more conevniently using the shell script:
   
   ```bash
-  cd polinBackgroundExtractor
+  cd polinBackgroundExtractor # root dir
   sh run_server.sh # Arguments set in file
   ```
   
@@ -110,7 +110,7 @@ Once the codebase has been built, there are 3 ways to leverage the library. Each
   
 3. Use web interface:
 
-  This could more accurately be described as an extension of the previous point since it also leverages the RESTful server interface. To use this, first start the server as described in the previous point. Then, simply open [www/video_extractor.html](/www/video_extractor.html) in your chosen web browser.
+  This could more accurately be described as an extension of the previous point since it also leverages the RESTful server interface. To use this, first start the server as described in the previous point. Then, simply open [www/video_extractor.html](/www/video_extractor.html)(your local copy) in your chosen web browser.
   
 ##Design##
   
