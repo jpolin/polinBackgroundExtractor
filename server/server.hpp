@@ -44,10 +44,8 @@ public:
 protected:
 
 	// User uploads video file
-	void put_cb(http_request request);
+	void post_cb(http_request request);
 
-	// Puts video file that needs extraction
-	void opt_cb(http_request request);
 
 	// Get ID for video/process
 	void get_cb(http_request request);

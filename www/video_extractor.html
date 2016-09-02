@@ -27,6 +27,15 @@
 				// Callback for clicking in text box
 				$("#video_path").click(upload_file);
 
+				function update_image(id, image_name){
+					var link = "../data/" + id + "/" + image_name;					
+	      	$("#background_link").attr("href", link);
+	      	document.getElementById('background_link').style.borderColor="black";
+	      	document.getElementById('background_link').style.backgroundColor="rgba(240,240,240,0.8)";
+	      	document.getElementById('background_link').text="open";
+	      	document.getElementById('background_link').style.backgroundImage="url("+link+")";
+				}
+
 				// Callback for when value of input changes
 				$("#upload_button").change(function() {
 
@@ -37,23 +46,31 @@
 
 						// Generate url for put request
 						var id = data["new_id"];
-						var dest_url = "http://localhost:" + port + "/" + id + "/" + file.name;
+						var dest_url = "http://localhost:"+ port + "/" + id + "/" + file.name;
 						console.log(dest_url);
+
+						// Image name (getting hacky)
+						var image_name = file.name.slice(0, -4) + ".jpg";
+						console.log(image_name);
+
+						document.getElementById('background_link').text="processing...";
 
 						// Put data
 						var formData = new FormData($("#form")[0]);
 						$.ajax({
 				        url: dest_url,
-				        type: 'PUT',			        
+				        type: 'POST',			        
 				        data: formData,
 				        cache: false,
-				        contentType: false,
-				        processData: false
+				        contentType: 'text/plain',
+				        processData: false,
+				        timeout:20000, //20 sec
 				        // Set output as photo
-				        success: function(data){
-				        	$("#background").src=data['link'];
-				        	$("#background_link").href=data['link'];
-				        }
+				        success: function(){
+				        	update_image(id, image_name);
+				        },//
+				        // error: update_image(id, image_name)
+				        
 				      });
 					});
 				});
@@ -88,7 +105,7 @@
 
 				<div id="output" class="center">
 					<a id="background_link">
-					<img id="background">
+					empty
 					</a>
 				</div>
 
