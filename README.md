@@ -122,7 +122,7 @@ Once the codebase has been built, there are 2 ways to leverage the library.
   
 ##Design (by class)##
   
-###Background Extraction ([bgExtractor](/extractor/bgExtractor.hpp))###
+###Background Extraction ([bgExtractor.hpp](/extractor/bgExtractor.hpp))###
 
 I investigated a number of methods for extracting the background, including more- and less-complicated versions of the Mixture of Gaussians model. Ultimately, the OpenCV function (BackgroundSubtractorMOG2) proved adequate, so I focused on packaging it up and delivering it in a more self-contained package. The inputs and outputs are purely file paths which provides 2 benefits:
 
