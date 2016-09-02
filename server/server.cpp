@@ -5,20 +5,69 @@ using namespace web;
 using namespace web::http;
 using namespace web::http::experimental::listener;
 
-bgExtractionServer::bgExtractionServer(const string &urlPort) : http_listener(urlPort){
+//using namespace boost::filesystem;
+
+bgExtractionServer::bgExtractionServer(const string &url, const uint port, const string &_data_path)
+: http_listener(url + ":" + to_string(port))
+{
 	// Assign callbacks (have to use pointer to member wrapper)
 	support(methods::POST, bind(&bgExtractionServer::post_cb, this, placeholders::_1));
 	support(methods::PUT, bind(&bgExtractionServer::put_cb, this, placeholders::_1));
 	support(methods::GET, bind(&bgExtractionServer::get_cb, this, placeholders::_1));
 	support(methods::DEL, bind(&bgExtractionServer::del_cb, this, placeholders::_1));
+
+	// Make sure no / on data path
+	data_path = boost::filesystem::path(_data_path).string();
+
+	cout<< "URL: " << uri().path() << endl;
+	cout << "Data folder at " << data_path << endl;
 }
 
 
-void bgExtractionServer::post_cb(http_request request){
+void bgExtractionServer::put_cb(http_request request){
 #ifdef DEBUG
-	cout << "POST REQUEST" << endl;
+	cout << "PUT REQUEST" << endl;
 #endif
-	pplx::task<web::json::value> val = request.extract_json();
+
+	// Extract data
+//	const string content_type = request.headers().content_type();
+//	cout << "COntent type: " << content_type << endl;
+	const string file_name = request.relative_uri().path();
+	const size_t lastIndex= file_name.find_last_of(".");
+	string extension;
+	if (lastIndex == string::npos)
+		extension = "";
+	else
+		extension = file_name.substr(lastIndex, string::npos);
+
+	// Check the type
+	if (/*content_type != "video/mp4" || */extension != ".mp4") {
+		cout << "Invalid video format " << extension << endl;
+		request.reply(status_codes::NotFound, "Invalid format--mp4 only for the time being");
+		return;
+	}
+
+	// Tokenize path
+	boost::char_separator<char> delim("/");
+	boost::tokenizer<boost::char_separator<char>> path_tokens(file_name, delim);
+	vector<string> path_elems;
+	for (auto &t : path_tokens) path_elems.push_back(t);
+
+	// Should be 2 items in path
+	if (path_elems.size() != 2){
+		cout << "Invalid path: " << file_name << endl;
+		request.reply(status_codes::NotFound, "Can only post /id_num/file_name.mp4");
+		return;
+	}
+
+	// Write file
+	const string output_file = data_path + "/" + path_elems[0] + "/" + path_elems[1];
+	ofstream video_file(output_file);
+	video_file << request.body();
+	video_file.close();
+
+	// Mission accomplished
+	request.reply(status_codes::OK);
 
 }
 
@@ -50,6 +99,12 @@ void bgExtractionServer::get_cb(http_request request){
 #endif
 		json::value response;
 		response["new_id"] = id;
+
+		// Create dir
+		string dir_path = data_path + "/" + to_string(id);
+		create_dir(dir_path.c_str());
+
+		// Say ok
 		request.reply(status_codes::OK, response);
 		return;
 	}
@@ -63,8 +118,8 @@ void bgExtractionServer::get_cb(http_request request){
 	// Trying to get background (path = /id_num/video_name.mp4)
 	else {
 
-		// File names
-		string background_file = "data/" + path_elems[0] + "/" + path_elems[1];
+		// File names (path_elems[0] is port)
+		string background_file =  data_path + "/" + path_elems[1] + "/" + path_elems[2];
 		const size_t lastIndex= background_file.find_last_of(".");
 		string video_name;
 		if (lastIndex == string::npos){
@@ -119,21 +174,27 @@ void bgExtractionServer::get_cb(http_request request){
 
 }
 
-void bgExtractionServer::put_cb(http_request request){
+void bgExtractionServer::post_cb(http_request request){
 #ifdef DEBUG
-	cout << "PUT REQUEST" << endl;
+	cout << "POST REQUEST -- Not implemented yet" << endl;
 #endif
 }
 
 void bgExtractionServer::del_cb(http_request request){
 #ifdef DEBUG
-	cout << "DEL REQUEST" << endl;
+	cout << "DEL REQUEST -- Not implemented yet" << endl;
 #endif
 }
 
 // Manage ID's:
 const uint bgExtractionServer::getNewID(){
-	return 5;
+
+	/* Dummy solution
+	 * (Would be better to keep track of id's used before server started, and of ones deleted)
+	 */
+	static uint id = 1;
+	return id++;
+
 }
 
 const bool bgExtractionServer::loadFileToString(const string &filename, string &buf){
@@ -143,11 +204,20 @@ const bool bgExtractionServer::loadFileToString(const string &filename, string &
 	stringstream ss;
 	ss << inputFile.rdbuf();
 	buf = ss.str();
+	inputFile.close();
 	return true;
 }
 
 int main(int argc, char** argv){
-	bgExtractionServer server("http://localhost:5007");
+	// Params
+	if (argc != 3){
+		cout << "Must provide 2 arguments: port and data folder path" << endl;
+		return -1;
+	}
+	const uint port = atoi(argv[1]);
+	const string data_path(argv[1]);
+
+	bgExtractionServer server("http://localhost", port, data_path);
 	server.open().then([&server](){cout<<"Starting Server\n";}).wait();
 	while (true);
 	return 0;

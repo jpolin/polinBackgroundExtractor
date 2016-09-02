@@ -18,20 +18,27 @@
 #include "cpprest/json.h"
 #include "pplx/pplxtasks.h"
 #include <boost/tokenizer.hpp>
+#include <boost/filesystem.hpp>
 #include <vector>
 #include <sstream>
 
 using namespace web::http;
 using namespace web::http::experimental::listener;
 
-
+// Creating dir (modified from jch's suggestion on Stack Overflow)
+#ifdef WIN32
+#include <direct.h>
+#define create_dir(filename) _mkdir(filename)
+#else
+#include <sys/stat.h>
+#define create_dir(filename) mkdir(filename, 0755)
+#endif
 
 class bgExtractionServer : public http_listener {
 
 public:
-	// Provide url:port (eg http://localhost:9999)
-	bgExtractionServer(const string &urlPort);// : http_listener(urlPort);
 
+	bgExtractionServer(const string &url, const uint port, const string &data_path);
 
 	// Puts contents of filename into string buf
 	static const bool loadFileToString(const string &filename, string &buf);
@@ -57,6 +64,9 @@ protected:
 
 	// Returns new, unique ID that no other client is using
 	const uint getNewID();
+
+	// Path to data folder
+	string data_path;
 
 
 };
