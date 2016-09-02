@@ -22,7 +22,17 @@
 
 				$("#video_path").click(upload_file);
 				$("#upload_button").change(function() {
-					document.getElementById("video_path").value = $("#upload_button").val();
+
+					// Get it converted
+					var file = $("#upload_button").val();
+					document.getElementById("video_path").value = file;
+
+					// Get an ID
+
+
+					// Request file
+
+					
 				});
 
 				// $("#upload_button").click();
