@@ -5,6 +5,7 @@
 ##Description##
 
   ###Overview###
+  
     This repository contains a library for extracting a static background image from a stationary video file (.mp4). It also offers 3 ways to leverage this library:
     
     - Dynamic linking from C++ executable to library
@@ -12,6 +13,7 @@
     - Web page that makes ajax calls which conform to REST interface
     
   ###Background subtraction###
+  
     The background extraction is handled by the OpenCV function ```BackgroundSubtractorMOG2(...)```. The implementation is based on the work of Zoran Zivkovic. The main features of the algorithm are:
     - Uses a self-varying number of mixed gaussian models to determine the value for each background pixel
     - Has the option for detecting shadows and returning them in the foreground mask (not relevant for background extraction)
