@@ -6,11 +6,10 @@
 
 ###Overview###
 
-  This repository contains a library for extracting a static background image from a stationary video file (.mp4). It also offers 3 ways to leverage this library:
+  This repository contains a library for extracting a static background image from a stationary video file (.mp4). It also offers 2 ways to leverage this library:
   
   - Dynamic linking from C++ executable to library
-  - Local server that offers a REST API interface to upload video and download image
-  - Web page that makes ajax calls which conform to REST interface
+  - A combination of a (locally hosted) server and web page; the two communicate using REST commands (eg GET, POST)
   
 ###Background subtraction###
 
@@ -62,7 +61,7 @@ The builds are intentionally placed outside of the source tree, and the executab
 
 ##Usage##
 
-Once the codebase has been built, there are 3 ways to leverage the library. 
+Once the codebase has been built, there are 2 ways to leverage the library. 
 
 1. Link executable to library:
 
@@ -88,7 +87,7 @@ Once the codebase has been built, there are 3 ways to leverage the library.
 
   Linking your exectuable to this library will provide better performance than the following 2 methods; however, we will see that using the REST interface will offer other advantages.
   
-2. Use REST API on a local server:
+2. Use a web page and local server
 
   First, the server must be started by calling the executable generated from [server_main.cpp](server/server_main.cpp) which accepts, as command-line arguments, the port and path to the data folder. It can be started more conevniently using the shell script:
   
@@ -97,22 +96,9 @@ Once the codebase has been built, there are 3 ways to leverage the library.
   sh run_server.sh # Arguments set in file
   ```
   
-  Since the server uses a [restful interface](https://en.wikipedia.org/wiki/Representational_state_transfer), the developer is not tied to a specific language. For instance, a background extraction can be done using command line arguments that talk to the server:
+  Since the server uses a [restful interface](https://en.wikipedia.org/wiki/Representational_state_transfer), the developer is not tied to a specific language. Most popular languages support the sending of (at least simple) REST commands, and one of the most popular it HTTP/Javascript (which is what my example uses). Simply open [www/video_extractor.html](/www/video_extractor.html)(your local copy, though) in your chosen web browser.
   
-  ```bash
-  # run_REST_client_demo.sh
-  #TODO: Copy CURL commands into here
-  ```
-  
-  These commands are included in [run_RESdT_client_demo.sh](/run_REST_client_demo.sh).
-  
-  A further advantage of using the RESTful server is that it is completely asynchronous and can handle multiple calls at the same time (I confirmed that the server would handle a second PUT request even if a first one was still being handled).
-  
-3. Use web interface:
-
-  This could more accurately be described as an extension of the previous point since it also leverages the RESTful server interface. To use this, first start the server as described in the previous point. Then, simply open [www/video_extractor.html](/www/video_extractor.html)(your local copy) in your chosen web browser.
-  
-  **NOTE:** Due to a bug that I'm still working through (specifics below), you can only upload the files that are in the **polingBackgroundExtractor/sample_videos** directory. I'm having trouble transferring the files with a PUT request, so currently I'm cheating by using the filename that gets passed to me and checking there.
+  **NOTE:** Due to a bug that I'm still working through (specifics below), you can only upload the files that are in the **polingBackgroundExtractor/sample_videos** directory. I'm having trouble transferring the files with a multi-part POST request, so currently I'm cheating by using the filename that gets passed to me and checking there.
   
 ##Design (by class)##
   
