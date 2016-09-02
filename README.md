@@ -79,6 +79,10 @@ cd ../../../../
 sh make_rel.sh
 ```
 
+###Dev environment###
+
+I did most of my C++ development in Eclipse. The .project file is included in this directory if you wish to import the project.
+
 ##Usage##
 
 Once the codebase has been built, there are 2 ways to leverage the library. 
