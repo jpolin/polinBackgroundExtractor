@@ -6,11 +6,10 @@
 
 ###Overview###
 
-  This repository contains a library for extracting a static background image from a stationary video file (.mp4). It also offers 3 ways to leverage this library:
+  This repository contains a library for extracting a static background image from a stationary video file (.mp4). It also offers 2 ways to leverage this library:
   
   - Dynamic linking from C++ executable to library
-  - Local server that offers a REST API interface to upload video and download image
-  - Web page that makes ajax calls which conform to REST interface
+  - A combination of a (locally hosted) server and web page; the two communicate using REST commands (eg GET, POST)
   
 ###Background subtraction###
 
@@ -62,7 +61,7 @@ The builds are intentionally placed outside of the source tree, and the executab
 
 ##Usage##
 
-Once the codebase has been built, there are 3 ways to leverage the library. 
+Once the codebase has been built, there are 2 ways to leverage the library. 
 
 1. Link executable to library:
 
@@ -82,13 +81,13 @@ Once the codebase has been built, there are 3 ways to leverage the library.
   For a complete example, see [extractor_main.cpp](/extractor/extractor_main.cpp). To run this example, run:
   
   ```bash
-  cd polinBackgroundExtractor # root fir
+  cd polinBackgroundExtractor # root dir
   sh run_extractor_executable.sh
   ```
 
   Linking your exectuable to this library will provide better performance than the following 2 methods; however, we will see that using the REST interface will offer other advantages.
   
-2. Use REST API on a local server:
+2. Use a web page and local server
 
   First, the server must be started by calling the executable generated from [server_main.cpp](server/server_main.cpp) which accepts, as command-line arguments, the port and path to the data folder. It can be started more conevniently using the shell script:
   
@@ -97,22 +96,9 @@ Once the codebase has been built, there are 3 ways to leverage the library.
   sh run_server.sh # Arguments set in file
   ```
   
-  Since the server uses a [restful interface](https://en.wikipedia.org/wiki/Representational_state_transfer), the developer is not tied to a specific language. For instance, a background extraction can be done using command line arguments that talk to the server:
+  Since the server uses a [restful interface](https://en.wikipedia.org/wiki/Representational_state_transfer), the developer is not tied to a specific language. Most popular languages support the sending of (at least simple) REST commands, and one of the most popular it HTTP/Javascript (which is what my example uses). Simply open [www/video_extractor.html](/www/video_extractor.html)(your local copy, though) in your chosen web browser.
   
-  ```bash
-  # run_REST_client_demo.sh
-  #TODO: Copy CURL commands into here
-  ```
-  
-  These commands are included in [run_RESdT_client_demo.sh](/run_REST_client_demo.sh).
-  
-  A further advantage of using the RESTful server is that it is completely asynchronous and can handle multiple calls at the same time (I confirmed that the server would handle a second PUT request even if a first one was still being handled).
-  
-3. Use web interface:
-
-  This could more accurately be described as an extension of the previous point since it also leverages the RESTful server interface. To use this, first start the server as described in the previous point. Then, simply open [www/video_extractor.html](/www/video_extractor.html)(your local copy) in your chosen web browser.
-  
-  **NOTE:** Due to a bug that I'm still working through (specifics below), you can only upload the files that are in the **polingBackgroundExtractor/sample_videos** directory. I'm having trouble transferring the files with a PUT request, so currently I'm cheating by using the filename that gets passed to me and checking there.
+  **NOTE:** Due to a bug that I didn't have time to work through (specifics below), you can only upload the files that are in the **polingBackgroundExtractor/sample_videos** directory. I'm having trouble transferring the files with a multi-part POST request, so I'm cheating by using the filename that gets passed to me and checking there.
   
 ##Design (by class)##
   
@@ -130,28 +116,37 @@ There are some enhancements I would make to this class given time:
 
 ###Server ([server.hpp](/server/server.hpp))###
 
-I still believe that designing a RESTful server that can be hosted locally was a good decision given its support in many languages, including javascript. In essence, running the server locally and accessing via webpage is similar to having a front-end for my library. At the same time, it could be deployed as a cloud service with little modification.
+I still believe that designing a RESTful server that can be hosted locally was a good decision given its support in many languages, including javascript. In essence, running the server locally and accessing via webpage is similar to having a front-end for my library. At the same time, it could be deployed as a cloud service with little modification to the architecture (it would certainly need to be extended though; see below).
 
 However, implementing the server in C++ proved more daunting than I anticipated (even with the help of the cpprestsdk library). In particular, writing the callback for a multi-part PUT command proved too complicated for this time frame. To simulate the proper funtionality, I am simply passing file paths between the server and webpage. Obviously, if this server were not being hosted on the same machine as the browser, it would not work. This is currently the largest weakness in the platform.
-
-Further, I ran into a number of other issues, such as Cross Origin Requests (CORs) due to the fact that the server was not being hosted on port 80. Apparently, when browsers (such as Google Chrome) make CORs, they encapsulate the PUT request inside of an OPTION request. Thus, the server currently interprets these as the same (admittedly, this is a short-term hack).
 
 An important design feature of the server is that the client must first request a unique ID to be associated with their upload/download. Once this ID is returned, the client is approved to upload their video file. This allows the server to make sure that two clients uploading videos with the same name (but different content) don't get crossed. In the data folder, these ID's are used as folder names, and each directory holds the .mp4 and .jpg files. Thus, the background extractor will not be re-run if multiple requests for the same file are made.
 
 Going forward, I would like make the following improvements and extensions to the server:
-- Properly implement the PUT callback to handle multi-part requests ([this library](https://github.com/webappsdk/granada) looks promising)
+- Properly implement the POST (or PUT) callback to handle multi-part requests ([this library](https://github.com/webappsdk/granada) looks promising)
 - Install more robust error checking (and helpful feedback) on faulty requests
 - Generate ID's more intelligently (check for existing folders/ID's at startup)
 - Implement DEL request to remove folder (and ID) when client closes session
 
 ###Large scale deployent###
 
-In the future, if this were to be deployed as a full cloud service, the architecture would need to be further extended. Although I personally don't have much first-hand experience in scaling a cloud-based application, I did my best to design the framework with this ultimate goal in mind. Given the knowledge I have now, my first attempt would look something like:
+In the future, if this were to be deployed as a full cloud service, the architecture would need to be further extended. Although I personally don't have much first-hand experience in scaling a cloud-based application, I did my best to design the framework with this ultimate goal in mind. Given the knowledge I have now, my next steps would look something like:
 
-- Install a container system, such as Docker, where each container had a version of the bgExtractor executable running
+- Install a container system, such as Docker, where the containers run the bgExtractor code
 - The Docker daemon would send paths of uploaded files to the extractors running in the containers
 - When the container finished, it would return a path to the background file (or an error code) to be delivered to the client
 
 Disclaimer: I haven't used containers or Docker before
+
+###Sources###
+
+Some resources that I depended on during development:
+
+http://mariusbancila.ro/blog/2013/08/19/full-fledged-client-server-example-with-cpprest-sdk-110/
+http://docs.opencv.org/3.1.0/d1/dc5/tutorial_background_subtraction.html
+https://github.com/Microsoft/cpprestsdk/blob/master/Release/samples/CasaLens/casalens.cpp
+http://stackoverflow.com/questions/14978411/http-post-and-get-using-curl-in-linux
+
+
 
 
