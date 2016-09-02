@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Background Extractor</title>
+		<meta charset="UTF-8">
+		<meta name="description" content="Extract background from MP4 video">
+		<meta name="author" content="Joe Polin">
+
+		<link rel="stylesheet" type="text/css" href="style.css">
+
+		<!-- Scripts -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+		<script>
+
+			$("document").ready(function(){
+				// Initialization
+				function upload_file(){
+					$("#upload_button").click();
+				}
+
+
+
+				$("#video_path").click(upload_file);
+				$("#upload_button").change(function() {
+					document.getElementById("video_path").value = $("#upload_button").val();
+				});
+
+				// $("#upload_button").click();
+			});
+		</script>
+	</head>
+
+	<body>
+		<div id="outer_box">
+			<div id="middle_box">
+				<div id="inner_box">
+					<div id="info">
+						<div class="center">
+							<h1>Background Extractor</h1>
+							<h4>by Joe Polin</h4>
+						</div>
+					</div>
+					<div id="input_wrapper">
+						<div class="center">
+							<input type="text" id="video_path" value="Upload file...">
+							<input type="file" id="upload_button">
+						</div>
+					</div>
+					<div id="output" class="center">out</div>
+				</div>
+			</div>
+		</div>
+	</body>
+
+</html>
