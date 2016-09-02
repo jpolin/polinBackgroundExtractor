@@ -29,6 +29,7 @@
 
 This was developed and successfully run on:
 - Ubuntu 14.04 (3.13.0-48-generic)
+- If you're running the same, you can skip to the end of this section where I list all the commands you need to run in one shot
 
 Be sure the following packages are installed:
 - CMake 2.8 or newer
@@ -58,6 +59,25 @@ cd release # or debug
 ```
 
 The builds are intentionally placed outside of the source tree, and the executables can be acccessed in their respective build directory (**debug** or **release**). 
+
+On my machine (Ubuntu 14.04), here are all of the commands I need to run:
+
+```bash
+
+# ** clone repository **
+cd polinBackgroundExtractor
+git submodule init
+git submodule update
+cd server/cpprestsdk/Release
+mkdir build
+cd build
+cmake ..
+make # Takes a while
+
+# Back to root of repository
+cd ../../../../
+sh make_rel.sh
+```
 
 ##Usage##
 
@@ -109,7 +129,9 @@ I investigated a number of methods for extracting the background, including more
 - Clients calling the methods directly in the library do not need to include or link to OpenCV
 - Since all requests coming into the server are already in the form of file paths, this makes for minimal work required by the server
 
-There are some enhancements I would make to this class given time:
+Another feature I added was a frame buffer limit. Since this can be fairly computationally expensive to iterate through every frame, there is a max number of frames that the algorithm will consider. Furthermore, it will spread these "frames of interest" evenly throughout the clip as best it can. Intuitively, this should make sure that a moving object that resides in the video for only the first 30% of the clip won't have an unfair influence.
+
+There are some other enhancements I would make to this class given time:
 - Provide a more conveneint way for measuring progress
 - Account for gradual changes in light
 - Determine when there are forefround objects and automatically have them buffered for the client
