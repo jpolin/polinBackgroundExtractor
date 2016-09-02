@@ -4,24 +4,24 @@
 
 ##Description##
 
-  ###Overview###
+###Overview###
+
+  This repository contains a library for extracting a static background image from a stationary video file (.mp4). It also offers 3 ways to leverage this library:
   
-    This repository contains a library for extracting a static background image from a stationary video file (.mp4). It also offers 3 ways to leverage this library:
-    
-    - Dynamic linking from C++ executable to library
-    - Local server that offers a REST API interface to upload video and download image
-    - Web page that makes ajax calls which conform to REST interface
-    
-  ###Background subtraction###
+  - Dynamic linking from C++ executable to library
+  - Local server that offers a REST API interface to upload video and download image
+  - Web page that makes ajax calls which conform to REST interface
   
-    The background extraction is handled by the OpenCV function ```BackgroundSubtractorMOG2(...)```. The implementation is based on the work of Zoran Zivkovic. The main features of the algorithm are:
-    - Uses a self-varying number of mixed gaussian models to determine the value for each background pixel
-    - Has the option for detecting shadows and returning them in the foreground mask (not relevant for background extraction)
-    
-    The algorithm currently relies on the following assumptions:
-    
-    - The camera is not moving relative to the background
-    - The algorithm, will not necessarily compensate for intensity changes, gradual or otherwise
+###Background subtraction###
+
+  The background extraction is handled by the OpenCV function ```BackgroundSubtractorMOG2(...)```. The implementation is based on the work of Zoran Zivkovic. The main features of the algorithm are:
+  - Uses a self-varying number of mixed gaussian models to determine the value for each background pixel
+  - Has the option for detecting shadows and returning them in the foreground mask (not relevant for background extraction)
+  
+  The algorithm currently relies on the following assumptions:
+  
+  - The camera is not moving relative to the background
+  - The algorithm, will not necessarily compensate for intensity changes, gradual or otherwise
 
 ##Setting Up and Running Examples##
   
